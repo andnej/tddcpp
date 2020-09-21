@@ -1,28 +1,29 @@
 #include "CommandLineInterface.hpp"
+using namespace std;
 
-size_t CommandLineInterface::cursor() const {
+size_t CharBasedCommandLineInterface::cursor() const {
   return _cursor;
 }
 
-size_t CommandLineInterface::capacity() const {
+size_t CharBasedCommandLineInterface::capacity() const {
   return _capacity;
 }
 
-std::string CommandLineInterface::toString() const {
+std::string CharBasedCommandLineInterface::toString() const {
   return std::string(_storage);
 }
 
-void CommandLineInterface::initStorage() {
+void CharBasedCommandLineInterface::initStorage() {
   initStorage(_storage, _capacity);
 }
 
-void CommandLineInterface::initStorage(char * storageptr, int capacity) {
+void CharBasedCommandLineInterface::initStorage(char * storageptr, int capacity) {
   for (int i = 0; i != capacity; ++i) {
     *(storageptr + i) = '\0';
   }
 }
 
-void CommandLineInterface::resize() {
+void CharBasedCommandLineInterface::resize() {
   size_t newcapacity = _capacity * 2;
   char * newStorage = new char[newcapacity];
   initStorage(newStorage, newcapacity);
@@ -32,25 +33,25 @@ void CommandLineInterface::resize() {
   _capacity = newcapacity;
 }
 
-size_t CommandLineInterface::size() const {
+size_t CharBasedCommandLineInterface::size() const {
   return strlen(_storage);
 }
 
-CommandLineInterface* CommandLineInterface::right() {
+CommandLineInterface* CharBasedCommandLineInterface::right() {
   if (_cursor < size()) {
     ++_cursor;
   }
   return this;
 }
 
-CommandLineInterface* CommandLineInterface::left() {
+CommandLineInterface* CharBasedCommandLineInterface::left() {
   if (_cursor > 0) {
     --_cursor;
   }
   return this;
 }
 
-CommandLineInterface* CommandLineInterface::type(char c) {
+CommandLineInterface* CharBasedCommandLineInterface::type(char c) {
   if (size() == (_capacity - 1)) {
     resize();
   }
