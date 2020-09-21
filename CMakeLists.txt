@@ -13,10 +13,12 @@ add_subdirectory(test)
 
 set(Headers
   Soundex.hpp
+  CommandLineInterface.hpp
 )
 
 set(Sources
   Soundex.cpp
+  CommandLineInterface.cpp
 )
 
 add_library(${This} STATIC ${Sources} ${Headers})

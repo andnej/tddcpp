@@ -2,6 +2,7 @@ set(This UnitTest)
 
 set(Sources
   SoundexTest.cpp
+  CommandLineInterfaceTest.cpp
 )
 
 add_executable(${This} ${Sources})
