@@ -9,7 +9,7 @@ size_t CharBasedCommandLineInterface::capacity() const {
   return _capacity;
 }
 
-std::string CharBasedCommandLineInterface::toString() const {
+string CharBasedCommandLineInterface::toString() const {
   return std::string(_storage);
 }
 
@@ -28,7 +28,7 @@ void CharBasedCommandLineInterface::resize() {
   char * newStorage = new char[newcapacity];
   initStorage(newStorage, newcapacity);
   strcpy(newStorage, _storage);
-  delete _storage;
+  delete[] _storage;
   _storage = newStorage;
   _capacity = newcapacity;
 }

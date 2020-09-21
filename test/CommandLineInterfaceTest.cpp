@@ -78,3 +78,20 @@ TEST_F(CharBasedCommandLineInterfaceTest, TypeTwoCharMoveLeftThenType) {
   EXPECT_THAT(cli->cursor(), ::testing::Eq(2));
   EXPECT_THAT(cli->toString(), ::testing::Eq("132"));
 }
+
+TEST_F(CharBasedCommandLineInterfaceTest, CopyConstructor) {
+  cli->type('a')->type('b')->type('c')->type('d')->type('e')->left()->left();
+  auto otherCli = CharBasedCommandLineInterface(*cli.get());
+  EXPECT_THAT(otherCli.toString(), ::testing::Eq(cli->toString()));
+  EXPECT_THAT(otherCli.capacity(), ::testing::Eq(cli->capacity()));
+  EXPECT_THAT(otherCli.cursor(), ::testing::Eq(cli->cursor()));
+}
+
+TEST_F(CharBasedCommandLineInterfaceTest, EqualOperator) {
+  cli->type('a')->type('b')->type('c')->type('d')->type('e')->left()->left();
+  CharBasedCommandLineInterface othercli = *cli.get();
+  CharBasedCommandLineInterface copied = othercli;
+  EXPECT_THAT(copied.toString(), ::testing::Eq(cli->toString()));
+  EXPECT_THAT(copied.capacity(), ::testing::Eq(cli->capacity()));
+  EXPECT_THAT(copied.cursor(), ::testing::Eq(cli->cursor()));
+}

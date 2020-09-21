@@ -16,6 +16,8 @@ class CommandLineInterface {
     virtual size_t capacity() const = 0;
     virtual size_t size() const = 0;
     virtual std::string toString() const = 0;
+
+    virtual ~CommandLineInterface() = default;
 };
 
 class CharBasedCommandLineInterface : CommandLineInterface {
@@ -34,6 +36,24 @@ class CharBasedCommandLineInterface : CommandLineInterface {
     size_t capacity() const override;
     size_t size() const override;
     std::string toString() const override;
+
+    CharBasedCommandLineInterface(const CharBasedCommandLineInterface &source) : _capacity(source._capacity), _cursor(source._cursor) {
+      _storage = new char[_capacity];
+      strcpy(_storage, source._storage);
+    }
+
+    CharBasedCommandLineInterface& operator=(const CharBasedCommandLineInterface &source) {
+      _storage = new char[_capacity];
+      strcpy(_storage, source._storage);
+      _capacity = source._capacity;
+      _cursor = source._cursor;
+
+      return *this;
+    }
+
+    ~CharBasedCommandLineInterface() {
+      delete[] _storage;
+    }
   private:
     void initStorage();
     void initStorage(char * storageptr, int capacity);
