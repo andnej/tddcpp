@@ -12,6 +12,6 @@
  You can run the unit test inside the build/test, it is an executable named `UnitTest`
  If you use Visual Studio Code to view this project, using an extension called `CMake Tools` will help the development/building process.
 
- Soundex is just an example that the book `Modern C++ Programming with Test Driven Development` use, I don't really get the requirement but using the knowledge that I got from previous work experience, I constructed CommandLineInterface using Char based and List based. This was a coding test from one of the companies that I applied in past, that explains why I'm not using vector (simply because its purpose was a skill test)
+ Soundex is just an example that the book `Modern C++ Programming with Test Driven Development` use, I don't really get the requirement but using the knowledge that I got from previous work experience, I constructed CommandLineInterface using Char based and List based. This was a coding test from one of the companies that I applied in past, that explains why I'm not using vector (simply because its purpose was a skill test). But then I tried doing it using vector which only takes 30 minutes to implement.
 
  I hope by sharing this, more people is using C++ and Test Driven Development

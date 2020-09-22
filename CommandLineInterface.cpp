@@ -98,13 +98,14 @@ size_t ListBasedCommandLineInterface::capacity() const {
 }
 
 std::string ListBasedCommandLineInterface::toString() const {
-  string content = "";
+  vector<char> content;
   auto vcursor = _start->next;
   while(vcursor != _end) {
-    content.append(1, vcursor->content);
+    content.push_back(vcursor->content);
     vcursor = vcursor->next;
   }
-  return content;
+
+  return string(content.begin(), content.end());
 }
 
 size_t ListBasedCommandLineInterface::size() const {
@@ -166,4 +167,51 @@ CommandLineInterface* ListBasedCommandLineInterface::remove() {
   }
   
   return this;
+}
+
+CommandLineInterface* VectorBasedCommandLineInterface::type(char c) {
+  if (_cursor == size()) {
+    _storage.push_back(c);
+  } else {
+    _storage.insert(_storage.begin() + _cursor, c);
+  }
+  _cursor++;
+  if (size() == capacity()) {
+    _storage.reserve(2 * capacity());
+  }
+  return this;
+}
+
+CommandLineInterface* VectorBasedCommandLineInterface::right() {
+  if (_cursor < size()) ++_cursor;
+  return this;
+}
+
+CommandLineInterface* VectorBasedCommandLineInterface::left() {
+  if (_cursor > 0) --_cursor;
+  return this;
+}
+
+CommandLineInterface* VectorBasedCommandLineInterface::remove() {
+  if (_cursor >= 0 && _cursor < size()) {
+    auto ptr = _storage.begin() + _cursor;
+    _storage.erase(ptr, ptr + 1);
+  }
+  return this;
+}
+
+size_t VectorBasedCommandLineInterface::cursor() const {
+  return _cursor;
+}
+
+size_t VectorBasedCommandLineInterface::capacity() const {
+  return _storage.capacity();
+}
+
+size_t VectorBasedCommandLineInterface::size() const {
+  return _storage.size();
+}
+
+std::string VectorBasedCommandLineInterface::toString() const {
+  return string(_storage.begin(), _storage.end());
 }

@@ -2,6 +2,7 @@
 #define CLI
 #include <memory>
 #include <string>
+#include <vector>
 #include <cstring>
 #include <cctype>
 
@@ -103,6 +104,26 @@ class ListBasedCommandLineInterface : CommandLineInterface {
     std::shared_ptr<Node> _cursor;
 
     std::size_t countUntil(std::shared_ptr<Node> toFind) const;
+};
+
+class VectorBasedCommandLineInterface : CommandLineInterface {
+  public:
+    static const size_t InitialCapacity{4};
+    VectorBasedCommandLineInterface() : _cursor(0) {
+      _storage.reserve(4);
+    }
+    CommandLineInterface* type(char c) override;
+    CommandLineInterface* right() override;
+    CommandLineInterface* left() override;
+    CommandLineInterface* remove() override;
+
+    size_t cursor() const override;
+    size_t capacity() const override;
+    size_t size() const override;
+    std::string toString() const override;
+  private:
+    std::vector<char> _storage;
+    int _cursor;
 };
 
 #endif
