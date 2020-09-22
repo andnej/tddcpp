@@ -69,23 +69,11 @@ CommandLineInterface* CharBasedCommandLineInterface::type(char c) {
 }
 
 size_t ListBasedCommandLineInterface::cursor() const {
-  int pos = 0;
-  auto vcursor = _start->next;
-  while(vcursor != _cursor) {
-    ++pos;
-    vcursor = vcursor->next;
-  }
-  return pos;
+  return countUntil(_cursor);
 }
 
 size_t ListBasedCommandLineInterface::capacity() const {
-  int pos = 0;
-  auto vcursor = _start->next;
-  while(vcursor != _end) {
-    ++pos;
-    vcursor = vcursor->next;
-  }
-  return pos;
+  return countUntil(_end);
 }
 
 std::string ListBasedCommandLineInterface::toString() const {
@@ -133,4 +121,14 @@ CommandLineInterface* ListBasedCommandLineInterface::left() {
     _cursor = _cursor->prev;
   }
   return this;
+}
+
+std::size_t ListBasedCommandLineInterface::countUntil(std::shared_ptr<Node> toFind) const {
+  int pos = 0;
+  auto vcursor = _start->next;
+  while(vcursor != toFind && vcursor != _end) {
+    ++pos;
+    vcursor = vcursor->next;
+  }
+  return pos;
 }

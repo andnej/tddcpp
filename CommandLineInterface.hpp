@@ -91,6 +91,8 @@ class ListBasedCommandLineInterface : CommandLineInterface {
     std::shared_ptr<Node> _start;
     std::shared_ptr<Node> _end;
     std::shared_ptr<Node> _cursor;
+
+    std::size_t countUntil(std::shared_ptr<Node> toFind) const;
 };
 
 #endif
