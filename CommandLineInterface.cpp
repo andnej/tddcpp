@@ -59,13 +59,34 @@ CommandLineInterface* CharBasedCommandLineInterface::type(char c) {
   if (*current == '\0') {
     *(current) = c;
   } else {
-    for(int i = size(); i != _cursor; --i) {
-      *(_storage + i) = *(_storage + i - 1);
-    }
+    shiftRightUntilCursor();
     *(current) = c;
   }
   ++_cursor;
   return this;
+}
+
+CommandLineInterface* CharBasedCommandLineInterface::remove() {
+  shiftLeftUntilCursor();
+  return this;
+}
+
+void CharBasedCommandLineInterface::shiftRightUntilCursor() {
+  auto oldSize = size();
+  for(int i = oldSize; i != _cursor; --i) {
+    *(_storage + i) = *(_storage + i - 1);
+  }
+}
+
+void CharBasedCommandLineInterface::shiftLeftUntilCursor() {
+  auto oldSize = size();
+  for(int i = _cursor; i != oldSize; ++i) {
+    if (i == (size() - 1)) {
+      *(_storage + i) = '\0';//put terminator char at the end of the string
+    } else {
+      *(_storage + i) = *(_storage + i + 1);
+    }
+  }
 }
 
 size_t ListBasedCommandLineInterface::cursor() const {
@@ -131,4 +152,18 @@ std::size_t ListBasedCommandLineInterface::countUntil(std::shared_ptr<Node> toFi
     vcursor = vcursor->next;
   }
   return pos;
+}
+
+CommandLineInterface* ListBasedCommandLineInterface::remove() {
+  if (_cursor != _end) {
+    auto toRemove = _cursor;
+    _cursor = toRemove->next;
+    auto theNodeBefore = toRemove->prev;
+    theNodeBefore->next = _cursor;
+    _cursor->prev = theNodeBefore;
+    toRemove->prev = nullptr;
+    toRemove->next = nullptr;
+  }
+  
+  return this;
 }

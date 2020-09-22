@@ -92,6 +92,14 @@ TEST_F(CharBasedCommandLineInterfaceTest, TypeTwoCharMoveLeftThenType) {
   EXPECT_THAT(cli->toString(), ::testing::Eq("132"));
 }
 
+TEST_F(CharBasedCommandLineInterfaceTest, TypeThreeCharMoveLeftTwoTimesThenRemove) {
+  cli->type('1')->type('2')->type('3')->left()->left()->remove();
+  EXPECT_THAT(cli->cursor(), ::testing::Eq(1));
+  EXPECT_THAT(cli->toString(), ::testing::Eq("13"));
+  EXPECT_THAT(cli->capacity(), ::testing::Eq(CharBasedCommandLineInterface::InitialCapacity));
+  EXPECT_THAT(cli->size(), ::testing::Eq(2));
+}
+
 TEST_F(CharBasedCommandLineInterfaceTest, CopyConstructor) {
   cli->type('a')->type('b')->type('c')->type('d')->type('e')->left()->left();
   auto otherCli = CharBasedCommandLineInterface(*cli.get());
@@ -152,4 +160,12 @@ TEST_F(ListBasedCommandLineInterfaceTest, TypeTwoCharMoveLeftThenType) {
   cli->type('1')->type('2')->left()->type('3');
   EXPECT_THAT(cli->cursor(), ::testing::Eq(2));
   EXPECT_THAT(cli->toString(), ::testing::Eq("132"));
+}
+
+TEST_F(ListBasedCommandLineInterfaceTest, TypeThreeCharMoveLeftTwoTimesThenRemove) {
+  cli->type('1')->type('2')->type('3')->left()->left()->remove();
+  EXPECT_THAT(cli->cursor(), ::testing::Eq(1));
+  EXPECT_THAT(cli->toString(), ::testing::Eq("13"));
+  EXPECT_THAT(cli->capacity(), ::testing::Eq(2));
+  EXPECT_THAT(cli->size(), ::testing::Eq(2));
 }

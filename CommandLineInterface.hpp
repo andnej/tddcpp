@@ -10,6 +10,7 @@ class CommandLineInterface {
     virtual CommandLineInterface* type(char c) = 0;
     virtual CommandLineInterface* right() = 0;
     virtual CommandLineInterface* left() = 0;
+    virtual CommandLineInterface* remove() = 0;
 
     virtual size_t cursor() const = 0;
     virtual size_t capacity() const = 0;
@@ -30,6 +31,7 @@ class CharBasedCommandLineInterface : CommandLineInterface {
     CommandLineInterface* type(char c) override;
     CommandLineInterface* right() override;
     CommandLineInterface* left() override;
+    CommandLineInterface* remove() override;
 
     size_t cursor() const override;
     size_t capacity() const override;
@@ -56,6 +58,8 @@ class CharBasedCommandLineInterface : CommandLineInterface {
   private:
     void initStorage();
     void initStorage(char * storageptr, int capacity);
+    void shiftRightUntilCursor();
+    void shiftLeftUntilCursor();
     void resize();
     size_t _cursor;
     size_t _capacity;
@@ -74,13 +78,19 @@ class ListBasedCommandLineInterface : CommandLineInterface {
     CommandLineInterface* type(char c) override;
     CommandLineInterface* right() override;
     CommandLineInterface* left() override;
+    CommandLineInterface* remove() override;
 
     size_t cursor() const override;
     size_t capacity() const override;
     size_t size() const override;
     std::string toString() const override;
 
-    ~ListBasedCommandLineInterface() {}
+    ~ListBasedCommandLineInterface() {
+      _cursor = _start->next;
+      while(_cursor != _end) {
+        remove();
+      }
+    }
   private:
     struct Node {
       Node(char c) : content(c) {}
