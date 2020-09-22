@@ -14,16 +14,29 @@ struct CharBasedCommandLineInterfaceTest : public testing::Test
   std::unique_ptr<CharBasedCommandLineInterface> cli;
 };
 
+struct ListBasedCommandLineInterfaceTest : public testing::Test
+{
+  void SetUp() override {
+    cli = std::make_unique<ListBasedCommandLineInterface>();
+  }
+
+  void TearDown() override {
+    cli.reset();
+  }
+  std::unique_ptr<ListBasedCommandLineInterface> cli;
+};
+
 TEST_F(CharBasedCommandLineInterfaceTest, InitialCursorPosition) {
   EXPECT_THAT(cli->cursor(), ::testing::Eq(0));
-  EXPECT_THAT(cli->capacity(), ::testing::Eq(CommandLineInterface::InitialCapacity));
+  EXPECT_THAT(cli->capacity(), ::testing::Eq(CharBasedCommandLineInterface::InitialCapacity));
+  EXPECT_THAT(cli->size(), ::testing::Eq(0));
   EXPECT_THAT(cli->toString(), ::testing::Eq(""));
 }
 
 TEST_F(CharBasedCommandLineInterfaceTest, TypeOneChar) {
   cli->type('a');
   EXPECT_THAT(cli->cursor(), ::testing::Eq(1));
-  EXPECT_THAT(cli->capacity(), ::testing::Eq(CommandLineInterface::InitialCapacity));
+  EXPECT_THAT(cli->capacity(), ::testing::Eq(CharBasedCommandLineInterface::InitialCapacity));
   EXPECT_THAT(cli->toString(), ::testing::Eq("a"));
 }
 
@@ -32,7 +45,7 @@ TEST_F(CharBasedCommandLineInterfaceTest, TypeThreeChar) {
   cli->type('b');
   cli->type('c');
   EXPECT_THAT(cli->cursor(), ::testing::Eq(3));
-  EXPECT_THAT(cli->capacity(), ::testing::Eq(CommandLineInterface::InitialCapacity));
+  EXPECT_THAT(cli->capacity(), ::testing::Eq(CharBasedCommandLineInterface::InitialCapacity));
   EXPECT_THAT(cli->toString(), ::testing::Eq("abc"));
 }
 
@@ -42,7 +55,7 @@ TEST_F(CharBasedCommandLineInterfaceTest, TypeFourChar) {
   cli->type('c');
   cli->type('d');
   EXPECT_THAT(cli->cursor(), ::testing::Eq(4));
-  EXPECT_THAT(cli->capacity(), ::testing::Eq(2 * CommandLineInterface::InitialCapacity));
+  EXPECT_THAT(cli->capacity(), ::testing::Eq(2 * CharBasedCommandLineInterface::InitialCapacity));
   EXPECT_THAT(cli->toString(), ::testing::Eq("abcd"));
 }
 
@@ -53,7 +66,7 @@ TEST_F(CharBasedCommandLineInterfaceTest, TypeFiveChar) {
   cli->type('d');
   cli->type('e');
   EXPECT_THAT(cli->cursor(), ::testing::Eq(5));
-  EXPECT_THAT(cli->capacity(), ::testing::Eq(2 * CommandLineInterface::InitialCapacity));
+  EXPECT_THAT(cli->capacity(), ::testing::Eq(2 * CharBasedCommandLineInterface::InitialCapacity));
   EXPECT_THAT(cli->toString(), ::testing::Eq("abcde"));
 }
 
@@ -94,4 +107,49 @@ TEST_F(CharBasedCommandLineInterfaceTest, EqualOperator) {
   EXPECT_THAT(copied.toString(), ::testing::Eq(cli->toString()));
   EXPECT_THAT(copied.capacity(), ::testing::Eq(cli->capacity()));
   EXPECT_THAT(copied.cursor(), ::testing::Eq(cli->cursor()));
+}
+
+TEST_F(ListBasedCommandLineInterfaceTest, InitialCursorPosition) {
+  EXPECT_THAT(cli->cursor(), ::testing::Eq(0));
+  EXPECT_THAT(cli->capacity(), ::testing::Eq(0));
+  EXPECT_THAT(cli->size(), ::testing::Eq(0));
+  EXPECT_THAT(cli->toString(), ::testing::Eq(""));
+}
+
+TEST_F(ListBasedCommandLineInterfaceTest, TypeOneChar) {
+  cli->type('a');
+  EXPECT_THAT(cli->cursor(), ::testing::Eq(1));
+  EXPECT_THAT(cli->capacity(), ::testing::Eq(1));
+  EXPECT_THAT(cli->toString(), ::testing::Eq("a"));
+}
+
+TEST_F(ListBasedCommandLineInterfaceTest, TypeThreeChar) {
+  cli->type('a');
+  cli->type('b');
+  cli->type('c');
+  EXPECT_THAT(cli->cursor(), ::testing::Eq(3));
+  EXPECT_THAT(cli->capacity(), ::testing::Eq(3));
+  EXPECT_THAT(cli->toString(), ::testing::Eq("abc"));
+}
+
+TEST_F(ListBasedCommandLineInterfaceTest, InitialMoveRight) {
+  EXPECT_THAT(cli->right()->cursor(), ::testing::Eq(0));
+}
+
+TEST_F(ListBasedCommandLineInterfaceTest, InitialMoveLeft) {
+  EXPECT_THAT(cli->left()->cursor(), ::testing::Eq(0));
+}
+
+TEST_F(ListBasedCommandLineInterfaceTest, TypeThenMoveLeft) {
+  EXPECT_THAT(cli->type('c')->left()->cursor(), ::testing::Eq(0));
+}
+
+TEST_F(ListBasedCommandLineInterfaceTest, TypeMoveLeftThenMoveRight) {
+  EXPECT_THAT(cli->type('c')->left()->right()->cursor(), ::testing::Eq(1));
+}
+
+TEST_F(ListBasedCommandLineInterfaceTest, TypeTwoCharMoveLeftThenType) {
+  cli->type('1')->type('2')->left()->type('3');
+  EXPECT_THAT(cli->cursor(), ::testing::Eq(2));
+  EXPECT_THAT(cli->toString(), ::testing::Eq("132"));
 }

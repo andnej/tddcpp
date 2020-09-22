@@ -1,13 +1,12 @@
 #ifndef CLI
 #define CLI
+#include <memory>
 #include <string>
 #include <cstring>
 #include <cctype>
 
 class CommandLineInterface {
   public:
-    static const size_t InitialCapacity{4};
-
     virtual CommandLineInterface* type(char c) = 0;
     virtual CommandLineInterface* right() = 0;
     virtual CommandLineInterface* left() = 0;
@@ -22,7 +21,7 @@ class CommandLineInterface {
 
 class CharBasedCommandLineInterface : CommandLineInterface {
   public:
-    typedef unsigned long size_t;
+    static const size_t InitialCapacity{4};
 
     CharBasedCommandLineInterface() : _capacity(InitialCapacity), _cursor(0) {
       _storage = new char[_capacity];
@@ -61,6 +60,37 @@ class CharBasedCommandLineInterface : CommandLineInterface {
     size_t _cursor;
     size_t _capacity;
     char* _storage;
+};
+
+class ListBasedCommandLineInterface : CommandLineInterface {
+  public:
+    ListBasedCommandLineInterface() {
+      _start = std::make_shared<Node>('\0');
+      _end = std::make_shared<Node>('\0');
+      _start->next = _end;
+      _end->prev = _start;
+      _cursor = _end;
+    }
+    CommandLineInterface* type(char c) override;
+    CommandLineInterface* right() override;
+    CommandLineInterface* left() override;
+
+    size_t cursor() const override;
+    size_t capacity() const override;
+    size_t size() const override;
+    std::string toString() const override;
+
+    ~ListBasedCommandLineInterface() {}
+  private:
+    struct Node {
+      Node(char c) : content(c) {}
+      char content;
+      std::shared_ptr<Node> next;
+      std::shared_ptr<Node> prev;
+    };
+    std::shared_ptr<Node> _start;
+    std::shared_ptr<Node> _end;
+    std::shared_ptr<Node> _cursor;
 };
 
 #endif

@@ -67,3 +67,70 @@ CommandLineInterface* CharBasedCommandLineInterface::type(char c) {
   ++_cursor;
   return this;
 }
+
+size_t ListBasedCommandLineInterface::cursor() const {
+  int pos = 0;
+  auto vcursor = _start->next;
+  while(vcursor != _cursor) {
+    ++pos;
+    vcursor = vcursor->next;
+  }
+  return pos;
+}
+
+size_t ListBasedCommandLineInterface::capacity() const {
+  int pos = 0;
+  auto vcursor = _start->next;
+  while(vcursor != _end) {
+    ++pos;
+    vcursor = vcursor->next;
+  }
+  return pos;
+}
+
+std::string ListBasedCommandLineInterface::toString() const {
+  string content = "";
+  auto vcursor = _start->next;
+  while(vcursor != _end) {
+    content.append(1, vcursor->content);
+    vcursor = vcursor->next;
+  }
+  return content;
+}
+
+size_t ListBasedCommandLineInterface::size() const {
+  return capacity();
+}
+
+CommandLineInterface* ListBasedCommandLineInterface::type(char c) {
+  auto node = make_shared<Node>(c);
+  if (_cursor == _end) {
+    auto theNodeBefore = _cursor->prev;
+    theNodeBefore->next = node;
+    node->prev = theNodeBefore;
+    node->next = _end;
+    _end->prev = node;
+  } else {
+    auto theNodeBefore = _cursor->prev;
+    theNodeBefore->next = node;
+    auto current = _cursor;
+    current->prev = node;
+    node->prev = theNodeBefore;
+    node->next = current;
+  }
+  return this;
+}
+
+CommandLineInterface* ListBasedCommandLineInterface::right() {
+  if (_cursor != _end) {
+    _cursor = _cursor->next;
+  }
+  return this;
+}
+
+CommandLineInterface* ListBasedCommandLineInterface::left() {
+  if (_cursor->prev != _start) {
+    _cursor = _cursor->prev;
+  }
+  return this;
+}
